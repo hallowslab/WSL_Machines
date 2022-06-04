@@ -6,9 +6,9 @@
 sipcalc ethtool traceroute whois nmap netcat wget curl nicstat telnet ping dig netstat host
 nslookup
 
-# Optional
+# Optional - as of 
 
-mtr fierce lynis nikto WPScan
+mtr fierce lynis nikto WPScan spidefoor yersinia
 
 ```
 
@@ -18,7 +18,7 @@ mtr fierce lynis nikto WPScan
 * `wsl.exe --install -d Debian`
 
 ## Configure user on WSL prompt
-* This has to be done manually for now... check [References - 3.](#references) to set up costum distros
+* This has to be done manually for now... check [References - 3.](#references) to set up custom distros
 
 ## Install system dependencies
 * `sudo apt update && sudo apt install -y lldpad libcap2-bin`
@@ -29,7 +29,7 @@ mtr fierce lynis nikto WPScan
 ## Configure user
 * Configure the user in /etc/wsl.conf
     - ```
-      tee -a /etc/wsl.conf <<EOF
+      sudo tee -a /etc/wsl.conf <<EOF
       [user]
       default=nettools
       EOF
@@ -40,34 +40,31 @@ mtr fierce lynis nikto WPScan
     - version can be minimal or full depending on included tools
 
 ## Import instance
-* Create new instances `wsl --import <new distribution name> <install location> <export file name>`
-    - `wsl --import NetTools .\NetTools nettools.tar`
+* Create new instances `wsl.exe --import <new distribution name> <install location> <export file name>`
+    - `wsl.exe --import NetTools_version .\NetTools_version nettools_version.tar`
 
 # Optional tools
 
 ## System
 * [NodeJS LTS](https://github.com/nodesource/distributions)
     - `curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -`
+        * wsl may crash after this step (IDK WHY)
 
 * system tools
     - ```
-      sudo apt install -y git tmux vim rkhunter gcc g++ make nodejs gpgv2 dirmngr automake autoconf pkgconf build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev
+      sudo apt install -y git tmux vim rkhunter gcc g++ make nodejs gpgv2 dirmngr automake autoconf pkgconf build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev libbz2-dev ruby-dev
       ```
     - feel free to replace tmux and vim with your choices EX: screen & nano
 
 * [Python 3.8.13](https://docs.python.org/3.8/)
     - `wget https://www.python.org/ftp/python/3.8.13/Python-3.8.13.tar.xz`
     - `tar -xf Python-3.8.13.tar.xz && rm -rf Python-3.8.13.tar.xz && cd Python-3.8.13`
-    - `./configure --enable-optimizations && make &&  && CD ~ && cd ~`
-    - `python3 -m pip install virtualenv`
+    - `./configure --enable-optimizations && make && sudo make install && cd ~`
     - `echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc`
+    - `source ~/.bashrc`
+    - **Optional**
+      * `python3 -m pip install virtualenv`
 
-* [RVM](https://rvm.io/rvm/install)
-    - `gpg --keyserver hkp://pgp.mit.edu --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB`
-    - `curl -L get.rvm.io | bash -s stable`
-    - `rvm install 2.6`
-    - `rvm alias create default ruby-2.6`
-    - refresh environment...
 
 * [Yarn](https://yarnpkg.com/)
     - `sudo corepack enable`
@@ -93,26 +90,26 @@ mtr fierce lynis nikto WPScan
 
 ## Install [WPScan](https://github.com/wpscanteam/wpscan)
 * Requires Ruby >= 2.5
-* `gem install wpscan`
+* `sudo gem install wpscan`
 
 ## Install [Spiderfoot](https://www.spiderfoot.net/documentation/)
 * `git clone https://github.com/smicallef/spiderfoot.git && cd spiderfoot`
 * `python3 -m virtualenv venv`
-* `./venv/bin/python -m pip install -r requirements.txt && cd ~`
-* `echo 'alias spiderfoot="cd ~/spiderfoot && ./venv/bin/python sf.py -l 127.0.0.1:5001"' >> ~/.bashrc`
-
-## Install [Skiptracer]https://gitlab.com/illwill/skiptracer)
-* `git clone https://github.com/xillwillx/skiptracer.git skiptracer && cd skiptracer`
-* 
-
-# WIP
+* `/home/nettools/spiderfoot/venv/bin/python -m pip install -r requirements.txt && cd ~`
+* `echo 'alias spiderfoot="cd ~/spiderfoot/ && venv/bin/python sf.py -l 127.0.0.1:5001"' >> ~/.bashrc`
 
 ## Install [Fierce](https://github.com/mschwager/fierce)
 Requires **Python3.6>=**
-* `git clone https://github.com/mschwager/fierce.git && cd fierce`
-* `python3 -m virtualenv venv`
-* `./venv/bin/python -m pip install -r requirements.txt`
-* `echo 'alias fierce="source venv/bin/activate && fierce"' >> ~/.bashrc`
+* `python3 -m pip install fierce`
+
+## Install [yersinia](https://github.com/tomac/yersinia)
+* `sudo apt install libpcap-dev`
+* `git clone https://github.com/tomac/yersinia.git && cd yersinia`
+* `./autogen.sh --disable-gtk`
+* `make`
+* `sudo make install`
+
+# WIP
 
 ## Install [Skipfish](https://gitlab.com/kalilinux/packages/skipfish/)
 * Download source
@@ -120,10 +117,8 @@ Requires **Python3.6>=**
     - From kali linux packages `git clone https://gitlab.com/kalilinux/packages/skipfish/`
 * `cd skipfish && make`
 
-## Install [yersinia](https://github.com/tomac/yersinia)
-* ....
 
-## Install [OpenVas OSS/free](https://github.com/greenbone/)
+## Install [OpenVas OSS/free]( )
 * ```
     sudo apt install -y bison cmake gcc-mingw-w64 heimdal-dev libgcrypt20-dev libglib2.0-dev libgnutls28-dev \
     libgpgme-dev libhiredis-dev libksba-dev libmicrohttpd-dev git libpcap-dev libpopt-dev libsnmp-dev libsqlite3-dev \
@@ -131,6 +126,14 @@ Requires **Python3.6>=**
     redis-server doxygen libical-dev python-polib gnutls-bin
   ```
 
+# Optional
+* [RVM](https://rvm.io/rvm/install)
+    - `gpg --keyserver hkp://pgp.mit.edu --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB`
+    - `curl -L get.rvm.io | bash -s stable`
+    - `source /home/nettools/.rvm/scripts/rvm`
+    - `rvm install 2.6`
+    - `rvm alias create default ruby-2.6`
+    - refresh environment...
 
 # References
 
